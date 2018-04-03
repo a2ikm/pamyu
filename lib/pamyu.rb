@@ -1,5 +1,5 @@
-require "pamyu/version"
+require_relative "pamyu/cli"
+require_relative "pamyu/version"
 
 module Pamyu
-  # Your code goes here...
 end

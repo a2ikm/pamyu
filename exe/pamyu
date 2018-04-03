@@ -1,38 +1,5 @@
 #!/usr/bin/env ruby
 
-require "open3"
-require "optparse"
-
-OptionParser.new do |op|
-  op.on "-o", "--out FILE" do |file|
-    options[:out] = file
-  end
-  op.on "-e", "--err FILE" do |file|
-    options[:err] = file
-  end
-end.parse!(ARGV)
-
-command = ARGV
-
-out = File.open(options[:out], "wb")
-err = File.open(options[:err], "wb")
-
-status = nil
-Open3.popen3(*command) do |stdin, stdout, stderr, wait_thr|
-  ios = { stdout => out, stderr => err }
-  stdin.close_write
-  begin
-    loop do
-      IO.select([stdout, stderr]).flatten.compact.each do |io|
-        io.each do |line|
-          ios[io].write line
-        end
-      end
-      break if stdout.eof? && stderr.eof?
-    end
-  rescue EOFError
-  end
-  status = wait_thr.value
-end
-
-exit(status.exitstatus rescue 1)
+require "pamyu"
+status = Pamyu::CLI.new(ARGV).execute
+exit(status.exitstatus)
