@@ -53,7 +53,9 @@ module Pamyu
         end
       elsif op_out
         out = open(op_out)
+        err = $stderr
       elsif op_err
+        out = $stdout
         err = open(op_err)
       end
 
